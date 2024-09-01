@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+    body {
+        font-family: 'Roboto Mono', monospace;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f1f1f1;
+    }
+
+    .container {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 1rem;
+        color: #333;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<body>
+    <div class="container"></div>
+    <script>
+        let startX, startY;
+        const element = document.querySelector('.container');
+        element.addEventListener('dragstart', function (e) {
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        element.addEventListener('drag', function (e) {
+            const currentX = e.clientX;
+            const currentY = e.clientY;
+
+            const distanceX = currentX - startX;
+            const distanceY = currentY - startY;
+
+            console.log('Distancia arrastrada:', distanceX, distanceY);
+            element.innerHTML = `Distancia arrastrada: ${distanceX}, ${distanceY}`;
+        });
+
+    </script>
+</body>
+
+</html>

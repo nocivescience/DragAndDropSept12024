@@ -121,7 +121,7 @@
             function createList() {
                 [...richestPeople]
                     .map(a => ({ value: a, sort: Math.random() }))
-                    .sort((a, b) => a.sort - b.sort)
+                    .sort((a, b) => a.sort - b.sort) // Ordenar aleatoriamente
                     .map(a => a.value)
                     .forEach((person, index) => {
                         const listItem = document.createElement('li');
@@ -151,7 +151,7 @@
                 e.preventDefault();
             }
             function dragDrop() {
-                const dragEndIndex = +this.getAttribute('data-index');
+                const dragEndIndex = +this.getAttribute('data-index'); // Obtener el índice de la lista a la que se arrastra el elemento
                 swapItems(dragStartIndex, dragEndIndex);
                 this.classList.remove('over');
             }
