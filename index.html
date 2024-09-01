@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Jacquard+12+Charted&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Press+Start+2P&family=Reddit+Mono:wght@200..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=VT323&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Roboto Mono', monospace;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f1f1f1;
+    }
+    .draggable-list {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 1rem;
+        color: #333;
+        list-style-type: none;
+    }
+    .draggable-list li {
+        background-color: #fff;
+        display: flex;
+        flex: 1; /* 1:1 */
+    }
+    .draggable-list li.over .draggable {
+        background-color: #e1e1e1;
+    }
+    .draggable{
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        flex: 1;
+    }
+    .check-btn {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        margin-top: 1rem;
+    }
+    .check-btn:hover {
+        background-color: #444;
+    }
+    .draggable-list li:not(:last-of-type) {
+        border-bottom: 1px solid #ccc;
+    }
+    .draggable-list .number {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: auto;
+    }
+    .draggable-list .person-name {
+        font-size: 1.2rem;
+        margin: 0 1rem;
+    }
+    .draggable-list li.right .person-name {
+        text-decoration: line-through;
+        color: #ccc;
+    }
+    .draggable-list li-wrong .person-name {
+        text-decoration: line-through;
+        color: #ff0000;
+    }
+    .check-btn:active {
+        transform: scale(0.98);
+    }
+    .check-btn:focus {
+        outline: none;
+    }
+</style>
+
+<body>
+    <h1>
+        Las personas más ricas del mundo
+    </h1>
+    <p>Agarra y suelta</p>
+    <ul class="draggable-list" id="draggable-list">
+        <button class="check-btn" id="check-btn">Ordenar</button>
+    </ul>
+    <script>
+        const draggable_list = document.getElementById('draggable-list');
+        const check = document.getElementById('check-btn');
+            const richestPeople = [
+                'Jeff Bezos',
+                'Elon Musk',
+                'Bernard Arnault & family',
+                'Bill Gates',
+                'Mark Zuckerberg',
+                'Warren Buffet',
+                'Larry Ellison',
+                'Larry Page',
+                'Sergey Brin',
+                'Mukesh Ambani'
+            ];
+            const listItems = [];
+            let dragStartIndex;
+            createList();
+            function createList() {
+                [...richestPeople]
+                    .map(a => ({ value: a, sort: Math.random() }))
+                    .sort((a, b) => a.sort - b.sort)
+                    .map(a => a.value)
+                    .forEach((person, index) => {
+                        const listItem = document.createElement('li');
+                        listItem.setAttribute('data-index', index);
+                        listItem.innerHTML = `
+                            <span class="number">${index + 1}</span>
+                            <div class="draggable" draggable="true">
+                                <p class="person-name">${person}</p>
+                                <i class="fas fa-grip-lines"></i>
+                            </div>
+                        `;
+                        listItems.push(listItem);
+                        draggable_list.appendChild(listItem);
+                    });
+                    addEventListeners();
+            }
+            function dragStart() {
+                dragStartIndex = +this.closest('li').getAttribute('data-index');
+            }
+            function dragEnter() {
+                this.classList.add('over');
+            }
+            function dragLeave() {
+                this.classList.remove('over');
+            }
+            function dragOver(e) {
+                e.preventDefault();
+            }
+            function dragDrop() {
+                const dragEndIndex = +this.getAttribute('data-index');
+                swapItems(dragStartIndex, dragEndIndex);
+                this.classList.remove('over');
+            }
+            function swapItems(fromIndex, toIndex) {
+                const itemOne = listItems[fromIndex].querySelector('.draggable');
+                const itemTwo = listItems[toIndex].querySelector('.draggable');
+                listItems[fromIndex].appendChild(itemTwo);
+                listItems[toIndex].appendChild(itemOne);
+            }
+            function checkOrder() {
+                listItems.forEach((listItem, index) => {
+                    const personName = listItem.querySelector('.draggable').innerText.trim();
+                    if (personName !== richestPeople[index]) {
+                        listItem.classList.add('wrong');
+                    } else {
+                        listItem.classList.remove('wrong');
+                        listItem.classList.add('right');
+                    }
+                });
+            }
+            function addEventListeners() {
+                const draggables = document.querySelectorAll('.draggable');
+                const dragListItems = document.querySelectorAll('.draggable-list li');
+                draggables.forEach(draggable => {
+                    draggable.addEventListener('dragstart', dragStart);
+                });
+                dragListItems.forEach(item => {
+                    item.addEventListener('dragover', dragOver);
+                    item.addEventListener('drop', dragDrop);
+                    item.addEventListener('dragenter', dragEnter);
+                    item.addEventListener('dragleave', dragLeave);
+                });
+            }
+    </script>
+</body>
+</html>
