@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        font-family: 'Roboto Mono', monospace;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f1f1f1;
+    }
+    .superior {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50%;
+        width: 70%;
+        border: 1px solid #ccc;
+        overflow: hidden; /* Para evitar que el contenedor se salga del div */
+    }
+    .container {
+        position: absolute;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 1rem;
+        color: #333;
+        width: 300px;
+        height: 200px;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        cursor: move;
+    }
+</style>
+<body>
+    <div class="superior">
+        <div class="container" draggable="true">arrastra el contenedor</div>
+    </div>
+    <script>
+        let startX, startY, initialX, initialY;
+        const container = document.querySelector('.container');
+        const superior = document.querySelector('.superior');
+
+        container.addEventListener('dragstart', function (e) {
+            const rect = container.getBoundingClientRect();
+            startX = e.clientX;
+            startY = e.clientY;
+            initialX = rect.left - superior.getBoundingClientRect().left;
+            initialY = rect.top - superior.getBoundingClientRect().top;
+        });
+
+        container.addEventListener('drag', function (e) {
+            if (e.clientX === 0 && e.clientY === 0) return; // Ignorar los eventos de 'drag' con coordenadas 0,0
+
+            const currentX = e.clientX;
+            const currentY = e.clientY;
+
+            const distanceX = currentX - startX;
+            const distanceY = currentY - startY;
+
+            let newLeft = initialX + distanceX;
+            let newTop = initialY + distanceY;
+
+            // Limitar el movimiento dentro del contenedor superior
+            newLeft = Math.max(0, Math.min(newLeft, superior.clientWidth - container.clientWidth));
+            newTop = Math.max(0, Math.min(newTop, superior.clientHeight - container.clientHeight));
+
+            container.style.left = `${newLeft}px`;
+            container.style.top = `${newTop}px`;
+
+            container.innerHTML = `Distancia arrastrada: ${newLeft}px, ${newTop}px`;
+        });
+    </script>
+</body>
+</html>
